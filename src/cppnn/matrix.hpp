@@ -10,6 +10,7 @@
 #include <limits>
 
 #include <omp.h>
+#include<cblas.h>
 
 namespace cppnn {
 
@@ -147,12 +148,17 @@ public:
     out.zeros();
     const auto o = other.data();
     const auto r = out.data();
-    #pragma omp parallel for
+#if 1
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, rows, other.cols, cols, 1.0, value, rows, o, other.rows, 0.0, r, out.rows);
+#else
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
     for(auto y = 0U; y < out.cols; y++) {
-      for(auto x = 0U; x < out.rows; x++) {
-        for(auto i = 0U; i < rows; i++) r[y * out.rows + x] += value[y * rows + i] * o[i * other.rows + x];
-      }
+      for(auto i = 0U; i < rows; i++)
+        for(auto x = 0U; x < out.rows; x++) r[y * out.rows + x] += value[y * rows + i] * o[i * other.rows + x];
     }
+#endif
     return out;
   }
 

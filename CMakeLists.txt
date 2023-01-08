@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.7)
 project(cppnn)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake)
@@ -6,15 +6,21 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/matplot.cmake)
 # find_package(Python3 COMPONENTS Development NumPy)
 
 find_package(Threads REQUIRED)
-find_package(OpenMP REQUIRED)
+find_package(OpenMP)
 if(OpenMP_FOUND)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
+cmake_minimum_required(VERSION 2.8)
+find_package( OpenBLAS REQUIRED )
+
 set(ALL_LINKS 
   Threads::Threads
   matplotlib_cpp
+  ${OpenBLAS_LIBRARIES}
+  ${OpenBLAS_LIB}
+  ${LAPACK_LIBRARIES}
   # Python3::Python Python3::NumPy)
 )
 
@@ -24,7 +30,6 @@ set(ALL_INCLUDES
   # ${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
   ${matplotlib_SOURCE_DIR}
 )
-
 include_directories(${ALL_INCLUDES})
 
 file(GLOB DATA_FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/*)
