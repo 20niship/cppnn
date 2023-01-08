@@ -1,6 +1,6 @@
 # C++ Neural Network
 
-![badge](https://github.com/20niship/tmp-cpp-tensorflow/actions/workflows/build.yml/badge.svg)
+![badge](https://github.com/20niship/cppnn/actions/workflows/build.yml/badge.svg)
 
 
 (ロボットインテリジェンス　課題A)
