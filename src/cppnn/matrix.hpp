@@ -140,19 +140,39 @@ public:
     for(int i = 0; i < rows * cols; i++) t[i] = value[i] - other[i];
     return std::move(t);
   }
-
   template <typename U> MatrixXd<U> operator*(const MatrixXd<U>& other) const {
     MU_ASSERT(other.cols == this->rows);
     MatrixXd<U> out(cols, other.rows);
     out.zeros();
     const auto o = other.data();
     const auto r = out.data();
-    #pragma omp parallel for
+#if 1
+#pragma omp parallel for
     for(auto y = 0U; y < out.cols; y++) {
-      for(auto x = 0U; x < out.rows; x++) {
-        for(auto i = 0U; i < rows; i++) r[y * out.rows + x] += value[y * rows + i] * o[i * other.rows + x];
+      for(auto i = 0U; i < rows; i++) {
+        for(auto x = 0U; x < out.rows; x++) {
+          r[y * out.rows + x] += value[y * rows + i] * o[i * other.rows + x];
+        }
       }
     }
+#else
+    int y, i, x;
+    T sum;
+
+    const auto my = out.cols;
+    const auto mi = rows;
+    const auto mx  = out.rows;
+#pragma omp parallel for private(x, y, i, sum) shared(o, r, value)
+    for(y = 0U; y < my; y++) {
+      for(i = 0U; i < mi; i++) {
+        sum = 0;
+        for(x = 0U; x < mx; x++)
+          sum += value[y * mi+ i] * o[i * mx + x];
+        r[y * mx + x] = sum;
+      }
+    }
+#endif
+
     return out;
   }
 

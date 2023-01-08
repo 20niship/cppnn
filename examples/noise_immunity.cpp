@@ -79,7 +79,10 @@ void run(double noise_weight, int hidden_size, Result* r) {
   }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+  const std::string fname = argv[1];
+  std::cout << "result = " << fname << std::endl;
+
   train.load(basepath + "train-labels-idx1-ubyte", basepath + "train-images-idx3-ubyte");
   t10k.load(basepath + "t10k-labels-idx1-ubyte", basepath + "t10k-images-idx3-ubyte");
 
@@ -97,11 +100,12 @@ int main() {
     std::vector<double> title;
   } result;
 
-  for(int i = 1; i < 7; i++) {
+  // 240 -> 200
+  for(int i = 0; i < 12; i++) {
     Result r1, r2;
-    const int hidden_size = 40 * i;
+    const int hidden_size = 40 + (20 * i);
     run(0., hidden_size, &r1);
-    run(0.3, hidden_size, &r2);
+    run(0.35, hidden_size, &r2);
     constexpr int n = 30;
     result.loss_train_n.push_back(r2.last_train_loss_average(n));
     result.acc_train_n.push_back(r2.last_train_acc_average(n));
@@ -112,6 +116,25 @@ int main() {
     result.acc_test.push_back(r1.last_test_acc_average(n));
 
     result.title.push_back(hidden_size);
+  }
+
+  {
+    std::ofstream fd;
+    fd.open(fname, std::ios::out);
+    auto write_csv = [&fd](const std::vector<double>& t) {
+      for(int i = 0; i < t.size() - 1; i++) fd << t[i] << ",";
+      fd << t.back() << std::endl;
+    };
+    write_csv(result.loss_train_n);
+    write_csv(result.acc_train_n);
+    write_csv(result.acc_test_n);
+
+    write_csv(result.loss_train);
+    write_csv(result.acc_train);
+    write_csv(result.acc_test);
+
+    write_csv(result.title);
+    fd.close();
   }
 
   {

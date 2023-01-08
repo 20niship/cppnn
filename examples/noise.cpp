@@ -15,7 +15,7 @@ DataSet train, t10k;
 // 0,5,10,15,20,25
 std::array<Result, 7> res;
 
-void calc_test_loss_acc(double* acc, double* loss, Model& model) {
+void calc_test_loss_acc(double* acc, double* loss, Model& model, double noise_weight) {
   const auto s = t10k.size();
   double l     = 0;
   double a     = 0;
@@ -23,6 +23,7 @@ void calc_test_loss_acc(double* acc, double* loss, Model& model) {
   for(int i = 0; i < n; i++) {
     MatD x, y;
     train.get_data(100, &x, &y);
+    add_noise(&x, noise_weight);
     model.evaluate(x, y);
     a += model.accuracy();
     l += model.loss();
@@ -31,7 +32,7 @@ void calc_test_loss_acc(double* acc, double* loss, Model& model) {
   *loss = l / n;
 }
 
-constexpr int epoch            = 5;
+constexpr int epoch            = 6;
 constexpr int batch_size       = 100;
 constexpr double learning_rate = 0.1;
 constexpr double weight        = 1;
@@ -67,7 +68,7 @@ void run(double noise_weight, Result* r) {
       const auto acc  = model.accuracy();
       const auto loss = model.loss();
       double tacc, tloss;
-      calc_test_loss_acc(&tacc, &tloss, model);
+      calc_test_loss_acc(&tacc, &tloss, model, noise_weight);
       r->loss_train.push_back(loss);
       r->acc_train.push_back(acc);
       r->loss_test.push_back(tloss);
@@ -87,26 +88,29 @@ void run(double noise_weight, Result* r) {
   }
 }
 
+
+#define NOISE_ITER 8
+
 void plot() {
   plt::suptitle("result");
   plt::subplot(1, 3, 1);
 
   plt::title("train loss");
-  for(int i = 0; i < 7; i++) {
+  for(int i = 0; i < NOISE_ITER; i++) {
     const std::string str = std::to_string(i * 5) + "%";
     plt::named_plot(str, res[i].epoch, res[i].loss_train);
   }
 
   plt::subplot(1, 3, 2);
   plt::title("train acc");
-  for(int i = 0; i < 7; i++) {
+  for(int i = 0; i < NOISE_ITER; i++) {
     const std::string str = std::to_string(i * 5) + "%";
     plt::named_plot(str, res[i].epoch, res[i].acc_train);
   }
 
   plt::subplot(1, 3, 3);
   plt::title("test acc");
-  for(int i = 0; i < 7; i++) {
+  for(int i = 0; i < NOISE_ITER; i++) {
     const std::string str = std::to_string(i * 5) + "%";
     plt::named_plot(str, res[i].epoch, res[i].acc_test);
   }
@@ -119,7 +123,7 @@ int main() {
   t10k.load(basepath + "t10k-labels-idx1-ubyte", basepath + "t10k-images-idx3-ubyte");
 
   std::cout << "train size = " << train.size() << std::endl;
-  for(int i = 0; i < 7; i++) run(0.05 * i, &res[i]);
+  for(int i = 0; i < NOISE_ITER; i++) run(0.05 * i, &res[i]);
   plot();
   return 0;
 }
