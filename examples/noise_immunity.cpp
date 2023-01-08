@@ -27,7 +27,7 @@ void calc_test_loss_acc(double* acc, double* loss, Model& model) {
   *loss = l / n;
 }
 
-constexpr int epoch            = 10;
+constexpr int epoch            = 8;
 constexpr int batch_size       = 100;
 constexpr double learning_rate = 0.1;
 constexpr double input_size    = 28 * 28;
@@ -73,8 +73,7 @@ void run(double noise_weight, int hidden_size, Result* r) {
       const auto loss  = r->loss_train.back();
       const auto tacc  = r->acc_test.back();
       const auto tloss = r->loss_test.back();
-      std::cout << "epoch " << nepoch << " -- "
-                << "noise " << noise_weight * 100 << "% " << acc << " , " << loss << " , " << tacc << ", " << tloss << std::endl;
+      std::cout << "epoch " << nepoch + 1 << " " << noise_weight * 100 << "%, " << hidden_size << " >> \t" << acc << " , " << loss << " , " << tacc << ", " << tloss << std::endl;
       nepoch++;
     }
   }
@@ -98,7 +97,7 @@ int main() {
     std::vector<double> title;
   } result;
 
-  for(int i = 1; i < 8; i++) {
+  for(int i = 1; i < 7; i++) {
     Result r1, r2;
     const int hidden_size = 40 * i;
     run(0., hidden_size, &r1);

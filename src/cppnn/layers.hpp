@@ -14,6 +14,9 @@ public:
   virtual MatD forward(MatD const& in, bool train_flag) = 0;
   virtual MatD backward(MatD const& out)                = 0;
   virtual void learn(double learning_rate)              = 0;
+
+  virtual std::string summary() const { return ""; };
+  virtual size_t trainable_param_size() const { return 0; };
 };
 
 class Affine : public AbstractLayer {
@@ -29,6 +32,8 @@ public:
   MatD forward(MatD const& in, bool unused = false) override;
   MatD backward(MatD const& out) override;
   void learn(double learning_rate) override;
+  std::string summary() const override;
+  size_t trainable_param_size() const override { return W.size() + B.size(); };
 };
 
 class ReLu : public AbstractLayer {
@@ -39,6 +44,7 @@ public:
   MatD forward(MatD const& in, bool) override;
   MatD backward(MatD const& out) override;
   void learn(double learning_rate) override{};
+  std::string summary() const override;
 };
 
 class Sigmoid : public AbstractLayer {
@@ -50,6 +56,7 @@ public:
   MatD forward(MatD const& in, bool unused = false) override;
   MatD backward(MatD const& out) override;
   void learn(double learning_rate) override{};
+  std::string summary() const override;
 };
 
 class Softmax : public AbstractLayer {
@@ -65,6 +72,7 @@ public:
   MatD forward(MatD const& in, bool unused = false) override;
   MatD backward(MatD const& out) override;
   void learn(double learning_rate) override{};
+  std::string summary() const override;
 };
 
 class DropOut : public AbstractLayer {
@@ -82,6 +90,7 @@ public:
   MatD forward(MatD const& in, bool train_flag = true) override;
   MatD backward(MatD const& out) override;
   void learn(double learning_rate) override{};
+  std::string summary() const override;
 };
 
 } // namespace cppnn::layer

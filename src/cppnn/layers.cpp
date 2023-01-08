@@ -2,7 +2,7 @@
 #include <cppnn/layers.hpp>
 #include <cppnn/random.hpp>
 #include <cppnn/util.hpp>
-#include <cwchar>
+#include <sstream>
 
 namespace cppnn::layer {
 
@@ -45,6 +45,11 @@ void Affine::learn(double learning_rate) {
   B -= dB * learning_rate;
 }
 
+std::string Affine::summary() const {
+  std::stringstream ss;
+  ss << "Affine(" << W.shape() << ")     " << W.shape()[1] << "      " << W.size() + B.size() << std::endl;
+  return ss.str();
+}
 
 void Sigmoid::reset() {}
 MatD Sigmoid::forward(MatD const& in, bool) {
@@ -61,6 +66,12 @@ MatD Sigmoid::backward(MatD const& out) {
   return dx;
 }
 
+std::string Sigmoid::summary() const {
+  std::stringstream ss;
+  ss << "Sigmoid(" << Y.shape() << ")     " << Y.shape()[1] << "      " << 0 << std::endl;
+  return ss.str();
+}
+
 void ReLu::reset() {}
 MatD ReLu::forward(const MatD& in, bool) {
   auto out = in;
@@ -73,6 +84,11 @@ MatD ReLu::forward(const MatD& in, bool) {
 }
 
 MatD ReLu::backward(const MatD& out) { return mask.mul(out); }
+std::string ReLu::summary() const {
+  std::stringstream ss;
+  ss << "ReLu(" << mask.shape() << ")     " << mask.shape()[1] << "      " << 0 << std::endl;
+  return ss.str();
+}
 
 Softmax::Softmax(int size) {
   Y.resize(1, size);
@@ -91,6 +107,11 @@ MatD Softmax::backward(const MatD& out) {
   MU_ASSERT(batch_size > 0);
   const auto dx = (Y - T) / batch_size;
   return dx;
+}
+std::string Softmax::summary() const {
+  std::stringstream ss;
+  ss << "Softmax(" << Y.rows << ")     " << Y.rows << "      " << 0 << std::endl;
+  return ss.str();
 }
 
 DropOut::DropOut(double ratio_) { m_ratio = ratio_; }
@@ -112,4 +133,10 @@ MatD DropOut::backward(const MatD& out) {
   MU_ASSERT(out.shape() == mask.shape());
   return out.mul(mask);
 }
+std::string DropOut::summary() const {
+  std::stringstream ss;
+  ss << "DropOut(" << mask.shape() << ")     " << mask.rows << "      " << 0 << std::endl;
+  return ss.str();
+}
+
 } // namespace cppnn::layer

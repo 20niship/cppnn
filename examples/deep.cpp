@@ -58,6 +58,12 @@ int main() {
   model.add(new layer::Affine(hiddens[2], 10, 0.1));
   model.add(new layer::Softmax(10));
 
+  {
+    MatD x_triain, y_train;
+    train.get_data(batch_size, &x_triain, &y_train);
+    model.summary();
+  }
+
   Result res;
 
   unsigned int k = 0;
@@ -85,7 +91,7 @@ int main() {
       const auto loss  = res.loss_train.back();
       const auto tacc  = res.acc_test.back();
       const auto tloss = res.loss_test.back();
-      std::cout << "epoch " << nepoch << " -- " << acc << " , " << loss << " , " << tacc << ", " << tloss << std::endl;
+      std::cout << "epoch " << nepoch + 1 << " -- " << acc << " , " << loss << " , " << tacc << std::endl;
       nepoch++;
     }
   }
