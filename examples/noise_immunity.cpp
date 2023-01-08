@@ -55,7 +55,7 @@ void run(double noise_weight, int hidden_size, Result* r) {
     add_noise(&x_triain, noise_weight);
     model.fit(x_triain, y_train, learning_rate);
 
-    if(i % 10 == 0) {
+    if(i % 80 == 0) {
       model.evaluate(x_triain, y_train);
       const auto acc  = model.accuracy();
       const auto loss = model.loss();
