@@ -42,3 +42,60 @@ examplesフォルダに課題に使用したプログラムが含まれていま
 - [examples/noise_immunity.cpp](examples/noise_immunity.cpp) : ノイズ耐性と隠れそうのニューロン数の関係を調べる
 - [examples/deep.cpp](examples/deep.cpp) : ５層のニューラルネットを試す
 
+
+## examples
+
+最小構成のプログラムは以下のとおりです
+
+```cpp
+#include <cppnn/cppnn.hpp>
+
+using namespace cppnn;
+DataSet dataset;
+
+int main() {
+  // MNISTデータセットの読み込み
+  dataset.load( "train-labels-idx1-ubyte", "train-images-idx3-ubyte");
+  std::cout << "dataset size = " << dataset.size() << std::endl;
+
+  constexpr int epoch = 12;
+  constexpr int batch_size       = 100;
+  constexpr double learning_rate = 0.1;
+
+  constexpr double input_size    = 28 * 28;
+  constexpr int hidden_size1     = 200;
+  constexpr int hidden_size1     = 100;
+
+  const int iteration      = iter_per_ecoch * std::max<int>(train.size() / batch_size, 1);
+
+  // モデル定義
+  model.add(new layer::affine(input_size, hidden_size1));
+  model.add(new layer::Sigmoid());
+  model.add(new layer::Affine(hidden_size1, hidden_size2));
+  model.add(new layer::Sigmoid());
+  // ↓他の層
+  // model.add(new layer::Dropout(0.2));
+  // model.add(new layer::ReLu());
+  model.add(new layer::Affine(hidden_size2, 10));
+  model.add(new layer::Softmax(10));
+
+  for(int i = 0; i < iteration; i++) {
+   // ランダムにbatch_size個の教師データを読み込み、x_trainとy_trainに格納
+    MatD x_triain, y_train;
+    dataset.get_data(batch_size, &x_triain, &y_train);
+
+    // 学習
+    model.fit(x_triain, y_train, learning_rate);
+
+    if(i % iter_per_ecoch == 0) {
+      model.evaluate(x_triain, y_train); //損失と正解率の計算
+      const auto acc  = model.accuracy();
+      const auto loss = model.loss();
+      std::cout << "epoch " << nepoch << " -- " << acc << " , " << loss << std::endl;
+      nepoch++;
+    }
+  }
+  return 0;
+}
+```
+
