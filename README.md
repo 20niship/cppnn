@@ -79,6 +79,7 @@ int main() {
   model.add(new layer::Affine(hidden_size2, 10));
   model.add(new layer::Softmax(10));
 
+  int nepoch = 0;
   for(int i = 0; i < iteration; i++) {
    // ランダムにbatch_size個の教師データを読み込み、x_trainとy_trainに格納
     MatD x_triain, y_train;
