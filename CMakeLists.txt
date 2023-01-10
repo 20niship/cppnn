@@ -19,7 +19,6 @@ set(ALL_LINKS
 )
 
 set(ALL_INCLUDES 
-  ${OpenCV_INCLUDE_DIRS} 
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   # ${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
   ${matplotlib_SOURCE_DIR}

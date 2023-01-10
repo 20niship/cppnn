@@ -28,7 +28,7 @@ void calc_test_loss_acc(double* acc, double* loss, Model& model) {
 }
 
 constexpr int epoch            = 8;
-constexpr int batch_size       = 100;
+constexpr int batch_size       = 50;
 constexpr double learning_rate = 0.1;
 constexpr double input_size    = 28 * 28;
 
@@ -101,9 +101,9 @@ int main(int argc, char* argv[]) {
   } result;
 
   // 240 -> 200
-  for(int i = 0; i < 12; i++) {
+  for(int i = 0; i < 15; i++) {
     Result r1, r2;
-    const int hidden_size = 40 + (20 * i);
+    const int hidden_size = 40 + (50 * i);
     run(0., hidden_size, &r1);
     run(0.35, hidden_size, &r2);
     constexpr int n = 30;

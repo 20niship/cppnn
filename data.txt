@@ -1,0 +1,5 @@
+データセットはMNISTを使用しています。
+
+http://yann.lecun.com/exdb/mnist/ 
+
+詳細は[mnist_downloader.sh](https://github.com/20niship/cppnn/blob/master/mnist_downloader.sh)を確認してください

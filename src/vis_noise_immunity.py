@@ -1,7 +1,13 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 
-res = np.genfromtxt('result.csv', delimiter=',')
+res = np.genfromtxt('res_hidden1.csv', delimiter=',')
+# res = np.genfromtxt('result4.csv', delimiter=',')
+# res += np.genfromtxt('result5.csv', delimiter=',')
+# res += np.genfromtxt('result6.csv', delimiter=',')
+# res += np.genfromtxt('result7.csv', delimiter=',')
+# res += np.genfromtxt('result8.csv', delimiter=',')
+# res /= 5.0
 
 losstrain_n = res[0]
 acctrain_n = res[1]
