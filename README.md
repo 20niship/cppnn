@@ -64,7 +64,7 @@ int main() {
 
   constexpr double input_size    = 28 * 28;
   constexpr int hidden_size1     = 200;
-  constexpr int hidden_size1     = 100;
+  constexpr int hidden_size2     = 100;
 
   const int iteration      = iter_per_ecoch * std::max<int>(train.size() / batch_size, 1);
 
@@ -73,7 +73,7 @@ int main() {
   model.add(new layer::Sigmoid());
   model.add(new layer::Affine(hidden_size1, hidden_size2));
   model.add(new layer::Sigmoid());
-  // ↓他の層
+  // ↓他の層の例（ 詳細は src/cppnn/layer.hpp ) 
   // model.add(new layer::Dropout(0.2));
   // model.add(new layer::ReLu());
   model.add(new layer::Affine(hidden_size2, 10));
@@ -90,8 +90,8 @@ int main() {
 
     if(i % iter_per_ecoch == 0) {
       model.evaluate(x_triain, y_train); //損失と正解率の計算
-      const auto acc  = model.accuracy();
-      const auto loss = model.loss();
+      const double acc  = model.accuracy();
+      const double loss = model.loss();
       std::cout << "epoch " << nepoch << " -- " << acc << " , " << loss << std::endl;
       nepoch++;
     }
